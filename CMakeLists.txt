@@ -19,3 +19,7 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif()
 
 add_subdirectory(src)
+
+set(CPACK_GENERATOR 7Z)
+set(CPACK_PACKAGE_CHECKSUM SHA256)
+include(CPack)

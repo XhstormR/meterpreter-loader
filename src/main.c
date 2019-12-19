@@ -4,7 +4,7 @@
 #include "rc4.h"
 #include "sha1.h"
 
-#define HOST "1.1.1.1"
+#define HOST "0.0.0.0"
 #define PORT "443"
 #define RC4PASS "pass"
 

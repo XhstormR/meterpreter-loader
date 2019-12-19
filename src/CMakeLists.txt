@@ -9,3 +9,4 @@ target_link_libraries(${APP_NAME}
 )
 
 install(TARGETS ${APP_NAME} RUNTIME DESTINATION bin)
+install(FILES ${PROJECT_SOURCE_DIR}/assets/start.vbs DESTINATION bin)
