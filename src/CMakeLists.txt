@@ -8,5 +8,5 @@ target_link_libraries(${APP_NAME}
         PRIVATE ws2_32
 )
 
-install(TARGETS ${APP_NAME} RUNTIME DESTINATION bin)
-install(FILES ${PROJECT_SOURCE_DIR}/assets/start.vbs DESTINATION bin)
+install(TARGETS ${APP_NAME} RUNTIME)
+install(PROGRAMS ${PROJECT_SOURCE_DIR}/assets/start.vbs TYPE BIN)
