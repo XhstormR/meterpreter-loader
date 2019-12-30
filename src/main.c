@@ -87,10 +87,10 @@ static char *getHandler(int *rawSize) {
   ws_init();
   WSOCKET = ws_connect(host, port);
 
-  char key[SHA1_DIGEST_SIZE + 1];
+  unsigned char key[SHA1_DIGEST_SIZE + 1];
   key[SHA1_DIGEST_SIZE] = 0;
   sha1_buffer(rc4pass, strlen(rc4pass), key);
-  char *rc4key = key + 4;
+  unsigned char *rc4key = key + 4;
   int xorkey = 0;
   for (int i = 0; i < 4; i++) {
     xorkey ^= key[i] << i * 8;
@@ -109,7 +109,7 @@ static char *getHandler(int *rawSize) {
 
   recv_all(WSOCKET, buf + 5, size);
 
-  RC4(rc4key, buf + 5, size);
+  RC4((char *)rc4key, buf + 5, size);
 
   return buf;
 }
